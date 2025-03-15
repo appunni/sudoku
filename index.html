@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <script src="./game.js"></script>
+</head>
+
+<body class="bg-gray-100 dark:bg-slate-800 min-h-screen py-4 transition-colors duration-200">
+    <div class="max-w-lg mx-auto px-4">
+        <div class="flex justify-end mb-2">
+            <button id="theme-toggle"
+                class="text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-lg text-sm p-2 transition-colors duration-200">
+                <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                </svg>
+                <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                        d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z">
+                    </path>
+                </svg>
+            </button>
+        </div>
+        <!-- Header -->
+        <header class="text-center mb-4">
+            <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-4 transition-colors duration-200">Sudoku
+                Game</h1>
+            <div class="flex justify-center gap-2">
+                <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
+                    New Game
+                </button>
+                <button id="auto-play"
+                    class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded inline-flex items-center gap-2">
+                    <svg id="play-icon" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <svg id="pause-icon" class="hidden w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Auto Solve</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Sudoku Grid -->
+        <div class="bg-white dark:bg-slate-700 rounded-lg shadow-lg p-4 mb-4 transition-colors duration-200">
+            <div class="grid grid-cols-9 gap-0 border-2 border-gray-900 dark:border-gray-200 transition-colors duration-200"
+                id="sudoku-grid">
+                <!-- Grid will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Number Pad -->
+        <div class="grid grid-rows-2 gap-1 max-w-xs mx-auto">
+            <div class="grid grid-cols-5 gap-1">
+                <button
+                    class="bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 text-blue-800 dark:text-blue-200 font-bold py-3 px-4 rounded transition-colors duration-200">1</button>
+                <button
+                    class="bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 text-blue-800 dark:text-blue-200 font-bold py-3 px-4 rounded transition-colors duration-200">2</button>
+                <button
+                    class="bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 text-blue-800 dark:text-blue-200 font-bold py-3 px-4 rounded transition-colors duration-200">3</button>
+                <button
+                    class="bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 text-blue-800 dark:text-blue-200 font-bold py-3 px-4 rounded transition-colors duration-200">4</button>
+                <button
+                    class="bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 text-blue-800 dark:text-blue-200 font-bold py-3 px-4 rounded transition-colors duration-200">5</button>
+            </div>
+            <div class="grid grid-cols-5 gap-1">
+                <button
+                    class="bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 text-blue-800 dark:text-blue-200 font-bold py-3 px-4 rounded transition-colors duration-200">6</button>
+                <button
+                    class="bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 text-blue-800 dark:text-blue-200 font-bold py-3 px-4 rounded transition-colors duration-200">7</button>
+                <button
+                    class="bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 text-blue-800 dark:text-blue-200 font-bold py-3 px-4 rounded transition-colors duration-200">8</button>
+                <button
+                    class="bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 text-blue-800 dark:text-blue-200 font-bold py-3 px-4 rounded transition-colors duration-200">9</button>
+                <button
+                    class="bg-red-100 dark:bg-red-900 hover:bg-red-200 dark:hover:bg-red-800 text-red-800 dark:text-red-200 font-bold py-3 px-4 rounded transition-colors duration-200 flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.2s ease-in-out;
+        }
+
+        .selected-cell {
+            @apply bg-green-100 dark:bg-green-800/60 border-2 border-green-500 dark:border-green-400 z-10 text-black dark:text-white font-bold;
+        }
+
+        .cell-highlight {
+            @apply bg-gray-50 dark:bg-slate-800/40 transition-colors duration-200;
+        }
+
+        .same-number {
+            @apply bg-blue-50 dark:bg-blue-800/40 transition-colors duration-200;
+        }
+
+        .conflict {
+            @apply text-red-600 dark:text-red-400 shake;
+        }
+
+        .completed {
+            @apply bg-green-50 dark:bg-green-900/20 transition-all duration-200;
+        }
+    </style>
+    <script>
+        // Theme toggle
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+        const themeToggleBtn = document.getElementById('theme-toggle');
+
+        function setDarkMode(isDark) {
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                themeToggleDarkIcon.classList.add('hidden');
+                themeToggleLightIcon.classList.remove('hidden');
+                localStorage.setItem('color-theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                themeToggleDarkIcon.classList.remove('hidden');
+                themeToggleLightIcon.classList.add('hidden');
+                localStorage.setItem('color-theme', 'light');
+            }
+        }
+
+        // Set initial theme
+        setDarkMode(
+            localStorage.getItem('color-theme') === 'dark' ||
+            (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        );
+
+        // Theme toggle button click handler
+        themeToggleBtn.addEventListener('click', function () {
+            setDarkMode(!document.documentElement.classList.contains('dark'));
+        });
+
+        // Initialize game
+        const game = new SudokuGame();
+        const grid = document.getElementById('sudoku-grid');
+        let selectedCell = null;
+        let lastSelectedNumber = null;
+        let isAutoPlaying = false;
+
+        async function autoPlay() {
+            const playIcon = document.getElementById('play-icon');
+            const pauseIcon = document.getElementById('pause-icon');
+            const autoPlayBtn = document.getElementById('auto-play');
+            const numberPad = document.querySelectorAll('.grid-cols-5 button');
+
+            // Toggle state
+            isAutoPlaying = !isAutoPlaying;
+
+            if (isAutoPlaying) {
+                // Update UI for auto-play mode
+                playIcon.classList.add('hidden');
+                pauseIcon.classList.remove('hidden');
+                autoPlayBtn.classList.replace('bg-green-500', 'bg-red-500');
+                autoPlayBtn.classList.replace('hover:bg-green-600', 'hover:bg-red-600');
+
+                // Disable user input
+                numberPad.forEach(btn => btn.disabled = true);
+
+                // Auto-solve loop
+                while (isAutoPlaying && !game.checkWin()) {
+                    const move = game.autoSolve();
+                    if (move) {
+                        // Update cell and highlight it
+                        const cell = grid.children[move.row * 9 + move.col];
+                        cell.textContent = move.value;
+                        cell.classList.add('selected-cell');
+
+                        // Wait for animation
+                        await new Promise(resolve => setTimeout(resolve, 500));
+
+                        cell.classList.remove('selected-cell');
+                    } else {
+                        break;
+                    }
+                }
+
+                // Check for completion
+                if (game.checkWin()) {
+                    grid.querySelectorAll('div[role="textbox"]').forEach(cell => {
+                        cell.classList.add('completed');
+                    });
+                    setTimeout(() => {
+                        alert('Congratulations! Puzzle solved automatically!');
+                    }, 500);
+                }
+
+                // Reset UI with success feedback
+                playIcon.classList.remove('hidden');
+                pauseIcon.classList.add('hidden');
+                autoPlayBtn.classList.replace('bg-red-500', game.checkWin() ? 'bg-green-500' : 'bg-yellow-500');
+                autoPlayBtn.classList.replace('hover:bg-red-600', game.checkWin() ? 'hover:bg-green-600' : 'hover:bg-yellow-600');
+                autoPlayBtn.querySelector('span').textContent = game.checkWin() ? 'Solved!' : 'Auto Solve';
+                numberPad.forEach(btn => btn.disabled = false);
+                isAutoPlaying = false;
+            } else {
+                // Stop auto-play
+                playIcon.classList.remove('hidden');
+                pauseIcon.classList.add('hidden');
+                autoPlayBtn.classList.replace('bg-red-500', 'bg-green-500');
+                autoPlayBtn.classList.replace('hover:bg-red-600', 'hover:bg-green-600');
+                numberPad.forEach(btn => btn.disabled = false);
+            }
+        }
+
+        function createGrid() {
+            grid.innerHTML = '';
+            for (let row = 0; row < 9; row++) {
+                for (let col = 0; col < 9; col++) {
+                    const cell = document.createElement('div');
+                    cell.dataset.row = row;
+                    cell.dataset.col = col;
+                    cell.tabIndex = 0; // Make div focusable
+                    cell.setAttribute('role', 'textbox');
+                    cell.setAttribute('aria-label', `Cell row ${row + 1}, column ${col + 1}`);
+                    cell.setAttribute('aria-description', 'Use number keys 1-9 to enter a value, or Backspace to clear');
+                    cell.className = `w-full h-10 flex items-center justify-center text-lg border border-gray-300 dark:border-gray-500 
+                                    outline-none text-gray-600 dark:text-gray-400 transition-colors duration-200 cursor-pointer
+                                    hover:bg-gray-50/50 dark:hover:bg-slate-800/30
+                                    focus:outline-none focus:border-green-400 dark:focus:border-green-400
+                                    focus:border-2`;
+
+                    // Add thicker borders
+                    if ((col + 1) % 3 === 0 && col !== 8) {
+                        cell.className += ' border-r-2 border-r-gray-900 dark:border-r-gray-200';
+                    }
+                    if ((row + 1) % 3 === 0 && row !== 8) {
+                        cell.className += ' border-b-2 border-b-gray-900 dark:border-b-gray-200';
+                    }
+
+                    // Add selection handlers
+                    cell.addEventListener('focus', function (e) {
+                        // Remove previous highlights and selection
+                        document.querySelectorAll('#sudoku-grid div[role="textbox"]').forEach(element => {
+                            element.classList.remove('cell-highlight', 'same-number', 'selected-cell');
+                        });
+
+                        selectedCell = cell;
+                        cell.classList.add('selected-cell');
+                        const currentRow = parseInt(cell.dataset.row);
+                        const currentCol = parseInt(cell.dataset.col);
+                        const currentVal = cell.textContent;
+
+                        // Highlight current row, column and 3x3 box
+                        document.querySelectorAll('#sudoku-grid div[role="textbox"]').forEach(element => {
+                            const cellRow = parseInt(element.dataset.row);
+                            const cellCol = parseInt(element.dataset.col);
+
+                            // Highlight same row/column
+                            if (cellRow === currentRow || cellCol === currentCol) {
+                                element.classList.add('cell-highlight');
+                            }
+
+                            // Highlight 3x3 box
+                            if (Math.floor(cellRow / 3) === Math.floor(currentRow / 3) &&
+                                Math.floor(cellCol / 3) === Math.floor(currentCol / 3)) {
+                                element.classList.add('cell-highlight');
+                            }
+
+                            // Highlight same numbers
+                            if (currentVal && element.textContent === currentVal) {
+                                element.classList.add('same-number');
+                            }
+                        });
+                    });
+
+                    // Handle click to focus
+                    cell.addEventListener('click', function (e) {
+                        if (document.activeElement !== cell) {
+                            cell.focus();
+                        }
+                    });
+
+                    // Add keyboard support
+                    cell.addEventListener('keydown', (e) => {
+                        if (e.key >= '1' && e.key <= '9') {
+                            const num = parseInt(e.key);
+                            if (game.setNumber(row, col, num)) {
+                                cell.textContent = num;
+                                if (!game.isValidPlacement(row, col, num)) {
+                                    cell.classList.add('conflict');
+                                    cell.classList.remove('selected-cell');
+                                    cell.classList.remove('shake');
+                                    void cell.offsetWidth;
+                                    cell.classList.add('shake');
+                                } else {
+                                    cell.classList.remove('conflict');
+                                }
+                                if (game.checkWin()) {
+                                    grid.querySelectorAll('div[role="textbox"]').forEach(cell => {
+                                        cell.classList.add('completed');
+                                        cell.classList.remove('selected-cell');
+                                    });
+                                    setTimeout(() => {
+                                        alert('Congratulations! You solved the puzzle!');
+                                    }, 500);
+                                }
+                            }
+                        } else if (e.key === 'Backspace' || e.key === 'Delete') {
+                            if (game.clearNumber(row, col)) {
+                                cell.textContent = '';
+                            }
+                        }
+                    });
+
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        function updateDisplay() {
+            const cells = grid.querySelectorAll('div[role="textbox"]');
+            for (let row = 0; row < 9; row++) {
+                for (let col = 0; col < 9; col++) {
+                    const index = row * 9 + col;
+                    const value = game.board[row][col];
+                    cells[index].textContent = value || '';
+
+                    // Style initial numbers and handle conflicts
+                    if (game.isInitialNumber(row, col)) {
+                        cells[index].setAttribute('aria-readonly', 'true');
+                        cells[index].className += ' bg-gray-100 dark:bg-slate-600 font-black text-gray-900 dark:text-gray-100 cursor-not-allowed hover:bg-gray-100 dark:hover:bg-slate-600';
+                    } else {
+                        cells[index].removeAttribute('aria-readonly');
+                        cells[index].className = cells[index].className.replace(/bg-gray-100|dark:bg-slate-600/g, '');
+
+                        // Check for conflicts
+                        if (value !== 0 && !game.isValidPlacement(row, col, value)) {
+                            cells[index].classList.add('conflict');
+                        } else {
+                            cells[index].classList.remove('conflict');
+                        }
+                    }
+                }
+            }
+        }
+
+        // Handle number pad clicks
+        document.querySelectorAll('.grid-cols-5 button').forEach(button => {
+            button.addEventListener('click', () => {
+                if (!selectedCell) return;
+
+                const row = parseInt(selectedCell.dataset.row);
+                const col = parseInt(selectedCell.dataset.col);
+
+                if (button.querySelector('svg')) {
+                    // Eraser button clicked
+                    if (game.clearNumber(row, col)) {
+                        selectedCell.textContent = '';
+                    }
+                } else {
+                    const num = parseInt(button.textContent);
+                    if (game.setNumber(row, col, num)) {
+                        selectedCell.textContent = num;
+
+                        // Remove conflict class if the move is valid
+                        if (game.isValidPlacement(row, col, num)) {
+                            selectedCell.classList.remove('conflict');
+                        } else {
+                            selectedCell.classList.add('conflict');
+                            selectedCell.classList.remove('shake');
+                            void selectedCell.offsetWidth; // Trigger reflow
+                            selectedCell.classList.add('shake');
+                        }
+
+                        if (game.checkWin()) {
+                            // Add completion animation
+                            grid.querySelectorAll('div[role="textbox"]').forEach(cell => {
+                                cell.classList.add('completed');
+                            });
+                            setTimeout(() => {
+                                alert('Congratulations! You solved the puzzle!');
+                            }, 500);
+                        }
+                    }
+                }
+            });
+        });
+
+        // New Game button functionality
+        document.querySelector('header button').addEventListener('click', () => {
+            game.generatePuzzle();
+            updateDisplay();
+        });
+
+        // Auto-play button functionality
+        document.getElementById('auto-play').addEventListener('click', autoPlay);
+
+        // Add completion check to auto-play
+        function checkCompletion() {
+            if (game.checkWin()) {
+                grid.querySelectorAll('div[role="textbox"]').forEach(cell => {
+                    cell.classList.add('completed');
+                });
+                setTimeout(() => {
+                    alert('Congratulations! You solved the puzzle!');
+                }, 500);
+            }
+        }
+
+        // Initialize the game
+        createGrid();
+        game.generatePuzzle();
+        updateDisplay();
+    </script>
+</body>
+
+</html>
