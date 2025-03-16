@@ -345,6 +345,28 @@
             }
         }
 
+        function resetAutoPlayButton() {
+            const playIcon = document.getElementById('play-icon');
+            const pauseIcon = document.getElementById('pause-icon');
+            const autoPlayBtn = document.getElementById('auto-play');
+            const numberPad = document.querySelectorAll('.grid-cols-5 button');
+
+            // Reset button state
+            isAutoPlaying = false;
+
+            // Reset UI
+            playIcon.classList.remove('hidden');
+            pauseIcon.classList.add('hidden');
+            autoPlayBtn.classList.remove('bg-red-500', 'bg-yellow-500');
+            autoPlayBtn.classList.add('bg-green-500');
+            autoPlayBtn.classList.remove('hover:bg-red-600', 'hover:bg-yellow-600');
+            autoPlayBtn.classList.add('hover:bg-green-600');
+            autoPlayBtn.querySelector('span').textContent = 'Auto Solve';
+
+            // Enable number pad
+            numberPad.forEach(btn => btn.disabled = false);
+        }
+
         function updateDisplay() {
             const cells = grid.querySelectorAll('div[role="textbox"]');
             for (let row = 0; row < 9; row++) {
@@ -418,6 +440,7 @@
         document.querySelector('header button').addEventListener('click', () => {
             game.generatePuzzle();
             updateDisplay();
+            resetAutoPlayButton();
         });
 
         // Auto-play button functionality
